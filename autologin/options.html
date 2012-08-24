@@ -1,0 +1,162 @@
+﻿<html>
+<head>
+<title>免输入登录插件设置</title>
+<script type="text/javascript" src="jquery-1.7.1.min.js"></script>
+<script type="text/javascript">
+            $(document).ready(function(){
+
+                $("input").each(function(){
+                    $(this).val(localStorage[$(this).attr("id")]);
+                })
+
+                $("#save").click(function(){
+                    $("input").each(function(){
+                        localStorage[$(this).attr("id")] = $(this).val();
+                    })
+
+                    $("#status").html("Options Saved.");
+
+                    setTimeout(function() {
+                        $("#status").html("")
+                    }, 750);
+                });
+
+            });
+
+            function toggleHide(id){
+                var obId = "#"+id+"Pwd";
+                var obId2 = id+"Pwd";
+                var temPwd = $(obId).val();
+                if("password"==$(obId).attr("type"))
+                {
+                    var content = "<input type='text' id='"+obId2+"'/>";
+
+                    $(obId).replaceWith(content);
+                    $(obId).attr("value",temPwd);
+                    $("#"+id).html("隐藏");
+                }else{
+                    var content = "<input type='password' id='"+obId2+"'/>";
+
+                    $(obId).replaceWith(content);
+                    $(obId).attr("value",temPwd);
+                    $("#"+id).html("显示");
+                }
+            }
+
+        </script>
+</head>
+<body>
+<table width="300px" border="0">
+  <tr>
+    <td colspan="2">QA Admin</td>
+    <td colspan="2">QA2 Admin</td>
+  </tr>
+  <tr>
+    <td>账号</td>
+    <td><input id="qaaUid" />
+      </td>
+    <td>账号</td>
+    <td><input id="qa2aUid" />
+      </td>
+  </tr>
+  <tr>
+    <td>密码</td>
+    <td><input type="password" id="qaaPwd" />
+
+      <a id="qaa" href="#" target="_self" onClick="toggleHide(this.id)">显示</a></td>
+    <td>密码</td>
+    <td><input type="password" id="qa2aPwd" />
+
+      <a id="qa2a" href="#" target="_self" onClick="toggleHide(this.id)">显示</a></td>
+  </tr>
+  <tr>
+    <td colspan="2">QA Member</td>
+    <td colspan="2">QA2 Member</td>
+  </tr>
+  <tr>
+    <td>账号</td>
+    <td><input id="qamUid" />
+      </td>
+    <td>账号</td>
+    <td><input id="qa2mUid" />
+      </td>
+  </tr>
+  <tr>
+    <td>密码</td>
+    <td><input type="password" id="qamPwd" />
+      <a id="qam" href="#" target="_self" onClick="toggleHide(this.id)">显示</a></td>
+    <td>密码</td>
+    <td><input type="password" id="qa2mPwd" />
+      <a id="qa2m" href="#" target="_self" onClick="toggleHide(this.id)">显示</a></td>
+  </tr>
+  <tr>
+    <td colspan="2">CQA Admin</td>
+    <td colspan="2">Support Admin</td>
+  </tr>
+  <tr>
+    <td>账号</td>
+    <td><input id="cqaaUid" />
+     </td>
+    <td>账号</td>
+    <td><input id="sptaUid" />
+  </td>
+  </tr>
+  <tr>
+    <td>密码</td>
+    <td><input type="password" id="cqaaPwd" />
+      <a id="cqaa" href="#" target="_self" onClick="toggleHide(this.id)">显示</a></td>
+    <td>密码</td>
+    <td><input type="password" id="sptaPwd" />
+      <a id="spta" href="#" target="_self" onClick="toggleHide(this.id)">显示</a></td>
+  </tr>
+  <tr>
+    <td colspan="2">CQA Member</td>
+    <td colspan="2">Support Member</td>
+  </tr>
+  <tr>
+    <td>账号</td>
+    <td><input id="cqamUid" />
+      </td>
+    <td>账号</td>
+    <td><input id="sptmUid" />
+      </td>
+  </tr>
+  <tr>
+    <td>密码</td>
+    <td><input type="password" id="cqamPwd" />
+      <a id="cqam" href="#" target="_self" onClick="toggleHide(this.id)">显示</a></td>
+    <td>密码</td>
+    <td><input type="password" id="sptmPwd" />
+      <a id="sptm" href="#" target="_self" onClick="toggleHide(this.id)">显示</a></td>
+  </tr>
+  <tr>
+    <td colspan="2">Training Admin</td>
+  </tr>
+  <tr>
+    <td>账号</td>
+	    <td><input id="taUid" />
+	      </td>
+  </tr>
+  <tr>
+    <td>密码</td>
+    <td><input type="password" id="taPwd" />
+      <a id="ta" href="#" target="_self" onClick="toggleHide(this.id)">显示</a></td>
+  </tr>
+  <tr>
+    <td colspan="2">Training Member</td>
+  </tr>
+  <tr>
+    <td>账号</td>
+    <td><input id="tmUid" />
+      </td>
+  </tr>
+  <tr>
+    <td>密码</td>
+    <td><input type="password" id="tmPwd" />
+      <a id="tm" href="#" target="_self" onClick="toggleHide(this.id)">显示</a></td>
+  </tr>
+</table>
+<button id="save">Save</button>
+<div id="status"></div>
+</body>
+</html>
