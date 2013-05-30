@@ -1,162 +1,247 @@
-﻿<html>
+<html>
 <head>
-<title>免输入登录插件设置</title>
+<title>auto login options</title>
+<style type="text/css">
+caption { 
+    padding: 0 0 5px 0;      
+    font: italic 30px "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif; 
+    text-align: center; 
+} 
+	
+/* 
+
+	TableCloth	
+	by Alen Grakalic, brought to you by cssglobe.com
+	
+*/ /* general styles */
+table,td {
+	font: 100% Arial, Helvetica, sans-serif;
+}
+
+table {
+	width: 100%;
+	border-collapse: collapse;
+	margin: 1em 0;
+}
+
+th,td {
+	text-align: left;
+	padding: .3em;
+	border: 1px solid #fff;
+}
+
+th {
+	background: #328aa4;
+	color: #fff;
+}
+
+td {
+	background: #e5f1f4;
+}
+
+/* tablecloth styles */
+tr.even td {
+	background: #e5f1f4;
+}
+
+tr.odd td {
+	background: #f8fbfc;
+}
+
+th.over,tr.even th.over,tr.odd th.over {
+	background: #4a98af;
+}
+
+th.down,tr.even th.down,tr.odd th.down {
+	background: #bce774;
+}
+
+th.selected,tr.even th.selected,tr.odd th.selected {
+	
+}
+
+td.over,tr.even td.over,tr.odd td.over {
+	background: #ecfbd4;
+}
+
+td.down,tr.even td.down,tr.odd td.down {
+	background: #bce774;
+	color: #fff;
+}
+
+td.selected,tr.even td.selected,tr.odd td.selected {
+	background: #bce774;
+	color: #555;
+}
+
+/* use this if you want to apply different styleing to empty table cells*/
+td.empty,tr.odd td.empty,tr.even td.empty {
+	background: #fff;
+}
+</style>
 <script type="text/javascript" src="jquery-1.7.1.min.js"></script>
 <script type="text/javascript">
             $(document).ready(function(){
+            	
+            		//refresh table
+								removeTableTRs();
+								reCreateTable();
 
-                $("input").each(function(){
-                    $(this).val(localStorage[$(this).attr("id")]);
-                })
-
-                $("#save").click(function(){
-                    $("input").each(function(){
-                        localStorage[$(this).attr("id")] = $(this).val();
-                    })
-
-                    $("#status").html("Options Saved.");
-
-                    setTimeout(function() {
-                        $("#status").html("")
-                    }, 750);
+								//save to localstorage
+								
+	                $("#save").click(function(){
+	                	if($("form")[0].checkValidity()){
+		            			var site=new Object;
+		            			$("#siteTable tr").each(function(trindex,tritem){
+		            				if(trindex>0){
+		  										
+													site.name = $(tritem).find("input:eq(0)").val();
+													site.url = 	$(tritem).find("input:eq(1)").val();
+													site.uid =  $(tritem).find("input:eq(2)").val();
+													site.pwd = 	$(tritem).find("input:eq(3)").val();
+													//save
+													localStorage.setItem('siteList'+trindex, JSON.stringify(site));
+												}	
+	           					});
+	            						
+		                  $("#status").html("Options Saved.");
+		                    setTimeout(function() {
+		                        $("#status").html("")
+		                    }, 750);
+	                  }
+	                });
+                
+                //insert row
+                $("#insert").click(function(){
+                	if($("form")[0].checkValidity()){
+	            			var tempIndex = $("tr:last td:first").text()*1+1;
+	            			if(tempIndex<2){
+	            				$("<tr><td>"+1+"</td>"+
+	            					"<td><input value='' required /></td>"+
+	            					"<td><input type='url' size='100' value='' required /></td>"+
+	            					"<td><input value='' required /></td>"+
+	            					"<td><input type='password' value='' required /></td>"+
+	            					//toggle hide button link
+	            					"<td><a id='th"+tempIndex+"' href='#' target='_self' onClick=toggleHide(this);>show</a></td>"+
+	            					//remove button link
+	            					"<td><a id='tm"+tempIndex+"' href='#' target='_self' onClick=removeTr(this);>remove</a></td>"+
+	            					"</tr>").appendTo("#siteTable");
+	            			}else{
+	            				$("tr:last").clone().appendTo("#siteTable");
+	            				$("tr:last td:first").text(tempIndex);
+											//set button id            				
+	            				$("tr:last td").eq(-2).find("a").attr("id","th"+tempIndex);
+	            				$("tr:last td:last a").attr("id","tm"+tempIndex);
+	            			}
+	            			
+	            			//save
+	            			var site=new Object;
+	            			$("#siteTable tr").each(function(trindex,tritem){
+	            				if(trindex>0){
+	  										
+												site.name = $(tritem).find("input:eq(0)").val();
+												site.url = 	$(tritem).find("input:eq(1)").val();
+												site.uid =  $(tritem).find("input:eq(2)").val();
+												site.pwd = 	$(tritem).find("input:eq(3)").val();
+												
+												//save
+												localStorage.setItem('siteList'+trindex, JSON.stringify(site));
+											}	
+										
+	         					});
+         					}
                 });
-
             });
+            
+            //remove all rows
+            function removeTableTRs(){
+            	$("#siteTable tr").each(function(trindex,tritem){
+            				if(trindex>0){
+  										$(tritem).remove();
+										}
+           		});
+            };
+            
+            //build table
+            function reCreateTable(){
+            	var count = localStorage.length;
+            	//alert(count);
+            	for(i=1;i<=count;i++){
+            		$("<tr><td>"+i+"</td>"+
+            		"<td><input value='"+JSON.parse(localStorage['siteList'+i]).name+"' required /></td>"+
+            		"<td><input type='url' size='80' value='"+JSON.parse(localStorage['siteList'+i]).url+"'required /></td>"+
+            		"<td><input value='"+JSON.parse(localStorage['siteList'+i]).uid+"' required /></td>"+
+            		"<td><input type='password' value='"+JSON.parse(localStorage['siteList'+i]).pwd+"' required /></td>"+
+            		//toggle hide button link
+            		"<td><a id='th"+i+"'href='#' target='_self' onClick=toggleHide(this);>show</a></td>"+
+            		//remove button link
+            					"<td><a id='rm"+i+"'href='#' target='_self' onClick=removeTr(this);>remove</a></td>"+
+            		"</tr>").appendTo("#siteTable");
+            	} 
+            };
 
-            function toggleHide(id){
-                var obId = "#"+id+"Pwd";
-                var obId2 = id+"Pwd";
-                var temPwd = $(obId).val();
-                if("password"==$(obId).attr("type"))
+						//toggle hide button
+            function toggleHide(who){
+       
+            		var obj = $("#"+who.id).parent().parent().find("input:last");
+                var temPwd = $(obj).val();
+                if("password"==$(obj).attr("type"))
                 {
-                    var content = "<input type='text' id='"+obId2+"'/>";
-
-                    $(obId).replaceWith(content);
-                    $(obId).attr("value",temPwd);
-                    $("#"+id).html("隐藏");
+                    var content = "<input type='text' value='"+temPwd+"'/>";
+                    $(obj).replaceWith(content);
+                    $("#"+who.id).html("hide");
                 }else{
-                    var content = "<input type='password' id='"+obId2+"'/>";
-
-                    $(obId).replaceWith(content);
-                    $(obId).attr("value",temPwd);
-                    $("#"+id).html("显示");
+                    var content = "<input type='password' value='"+temPwd+"'/>";
+                    $(obj).replaceWith(content);
+                    $("#"+who.id).html("show");
                 }
+        		};
+            
+            //remove row
+            function removeTr(who){
+            		//get current index
+            		var index = $("#"+who.id).parent().parent().parent().find("tr").index($("#"+who.id).parent().parent());
+            		
+            		//rebuild id and refersh table
+            		rebuildId(index);
+            		removeTableTRs();
+            		reCreateTable();
+            };
+            
+            //rebuild id
+            function rebuildId(index){
+            	var count = localStorage.length;
+            	var i=index;
+            	//swap localStorage
+            	while(i<count){
+            		if(i<count){
+	            		var temIndex=i;
+	            		var temp;
+	            		i++;
+	            		localStorage['siteList'+temIndex]=localStorage['siteList'+i];
+            		}
+            	}
+            	//delete the last localstorage
+            	localStorage.removeItem('siteList'+i);
             }
-
+           
         </script>
 </head>
 <body>
-<table width="300px" border="0">
+<form>
+<table width="800" border="1" id="siteTable">
   <tr>
-    <td colspan="2">QA Admin</td>
-    <td colspan="2">QA2 Admin</td>
-  </tr>
-  <tr>
-    <td>账号</td>
-    <td><input id="qaaUid" />
-      </td>
-    <td>账号</td>
-    <td><input id="qa2aUid" />
-      </td>
-  </tr>
-  <tr>
-    <td>密码</td>
-    <td><input type="password" id="qaaPwd" />
-
-      <a id="qaa" href="#" target="_self" onClick="toggleHide(this.id)">显示</a></td>
-    <td>密码</td>
-    <td><input type="password" id="qa2aPwd" />
-
-      <a id="qa2a" href="#" target="_self" onClick="toggleHide(this.id)">显示</a></td>
-  </tr>
-  <tr>
-    <td colspan="2">QA Member</td>
-    <td colspan="2">QA2 Member</td>
-  </tr>
-  <tr>
-    <td>账号</td>
-    <td><input id="qamUid" />
-      </td>
-    <td>账号</td>
-    <td><input id="qa2mUid" />
-      </td>
-  </tr>
-  <tr>
-    <td>密码</td>
-    <td><input type="password" id="qamPwd" />
-      <a id="qam" href="#" target="_self" onClick="toggleHide(this.id)">显示</a></td>
-    <td>密码</td>
-    <td><input type="password" id="qa2mPwd" />
-      <a id="qa2m" href="#" target="_self" onClick="toggleHide(this.id)">显示</a></td>
-  </tr>
-  <tr>
-    <td colspan="2">CQA Admin</td>
-    <td colspan="2">Support Admin</td>
-  </tr>
-  <tr>
-    <td>账号</td>
-    <td><input id="cqaaUid" />
-     </td>
-    <td>账号</td>
-    <td><input id="sptaUid" />
-  </td>
-  </tr>
-  <tr>
-    <td>密码</td>
-    <td><input type="password" id="cqaaPwd" />
-      <a id="cqaa" href="#" target="_self" onClick="toggleHide(this.id)">显示</a></td>
-    <td>密码</td>
-    <td><input type="password" id="sptaPwd" />
-      <a id="spta" href="#" target="_self" onClick="toggleHide(this.id)">显示</a></td>
-  </tr>
-  <tr>
-    <td colspan="2">CQA Member</td>
-    <td colspan="2">Support Member</td>
-  </tr>
-  <tr>
-    <td>账号</td>
-    <td><input id="cqamUid" />
-      </td>
-    <td>账号</td>
-    <td><input id="sptmUid" />
-      </td>
-  </tr>
-  <tr>
-    <td>密码</td>
-    <td><input type="password" id="cqamPwd" />
-      <a id="cqam" href="#" target="_self" onClick="toggleHide(this.id)">显示</a></td>
-    <td>密码</td>
-    <td><input type="password" id="sptmPwd" />
-      <a id="sptm" href="#" target="_self" onClick="toggleHide(this.id)">显示</a></td>
-  </tr>
-  <tr>
-    <td colspan="2">Training Admin</td>
-  </tr>
-  <tr>
-    <td>账号</td>
-	    <td><input id="taUid" />
-	      </td>
-  </tr>
-  <tr>
-    <td>密码</td>
-    <td><input type="password" id="taPwd" />
-      <a id="ta" href="#" target="_self" onClick="toggleHide(this.id)">显示</a></td>
-  </tr>
-  <tr>
-    <td colspan="2">Training Member</td>
-  </tr>
-  <tr>
-    <td>账号</td>
-    <td><input id="tmUid" />
-      </td>
-  </tr>
-  <tr>
-    <td>密码</td>
-    <td><input type="password" id="tmPwd" />
-      <a id="tm" href="#" target="_self" onClick="toggleHide(this.id)">显示</a></td>
+    <th scope="col">No#</th>
+    <th scope="col">Name</th>
+    <th scope="col" width="300">link</th>
+    <th scope="col">UserId</th>
+    <th scope="col">Password</th>
+    <th scope="col" colspan=2>Action</th>
   </tr>
 </table>
-<button id="save">Save</button>
+<button type='submit' id="save">save</button>
+<button type='submit' id="insert">insert</button>
+</form>
 <div id="status"></div>
 </body>
 </html>
