@@ -39,17 +39,30 @@ $(document).ready(function(){
 					"<td><input value='' required /></td>"+
 					"<td><input type='password' value='' required /></td>"+
 					//toggle hide button link
-					"<td><a id='th"+tempIndex+"' href='#' target='_self' onClick=toggleHide(this);>show</a></td>"+
+					"<td><a id='th"+tempIndex+"' href='#' target='_self'>show</a></td>"+
 					//remove button link
-					"<td><a id='tm"+tempIndex+"' href='#' target='_self' onClick=removeTr(this);>remove</a></td>"+
+					"<td><a id='rm"+tempIndex+"' href='#' target='_self'>remove</a></td>"+
 					"</tr>").appendTo("#siteTable");
+
+                
 			}else{
 				$("tr:last").clone().appendTo("#siteTable");
 				$("tr:last td:first").text(tempIndex);
 							//set button id            				
 				$("tr:last td").eq(-2).find("a").attr("id","th"+tempIndex);
-				$("tr:last td:last a").attr("id","tm"+tempIndex);
+				$("tr:last td:last a").attr("id","rm"+tempIndex);
 			}
+
+            //bind toggle & save when the new line created
+            $("#th"+tempIndex).on("click", function(event)
+            {
+                toggleHide(this);
+            });
+
+            $("#rm"+tempIndex).on("click", function(event)
+            {
+                removeTr(this);
+            });
 			
 			//save
 			var site=new Object;
@@ -73,10 +86,10 @@ $(document).ready(function(){
 //remove all rows
 function removeTableTRs(){
 	$("#siteTable tr").each(function(trindex,tritem){
-				if(trindex>0){
-								$(tritem).remove();
-							}
-		});
+		if(trindex>0){
+			$(tritem).remove();
+		}
+	});
 };
 
 //build table
@@ -90,10 +103,21 @@ function reCreateTable(){
 		"<td><input value='"+JSON.parse(localStorage['siteList'+i]).uid+"' required /></td>"+
 		"<td><input type='password' value='"+JSON.parse(localStorage['siteList'+i]).pwd+"' required /></td>"+
 		//toggle hide button link
-		"<td><a id='th"+i+"'href='#' target='_self' onClick=toggleHide(this);>show</a></td>"+
+		"<td><a id='th"+i+"'href='#' target='_self'>show</a></td>"+
 		//remove button link
-					"<td><a id='rm"+i+"'href='#' target='_self' onClick=removeTr(this);>remove</a></td>"+
+					"<td><a id='rm"+i+"'href='#' target='_self'>remove</a></td>"+
 		"</tr>").appendTo("#siteTable");
+
+        //bind toggle & save
+        $("#th"+i).on("click", function(event)
+        {
+            toggleHide(this);
+        });
+
+        $("#rm"+i).on("click", function(event)
+        {
+            removeTr(this);
+        });
 	} 
 };
 
@@ -141,3 +165,4 @@ function rebuildId(index){
 	//delete the last localstorage
 	localStorage.removeItem('siteList'+i);
 }
+
